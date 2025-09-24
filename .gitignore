@@ -1,0 +1,18 @@
+# Build artifacts
+build/
+*.o
+*.exe
+*.out
+
+# IDE files
+.vscode/settings.json
+.vscode/launch.json
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.swp
+*~

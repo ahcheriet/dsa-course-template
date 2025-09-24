@@ -1,0 +1,131 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build All Assignments",
+            "type": "shell",
+            "command": "mkdir -p build && cd build && cmake .. && make",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "Run All Tests",
+            "type": "shell",
+            "command": "cd build && ctest --verbose",
+            "group": "test",
+            "dependsOn": "Build All Assignments",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+        {
+            "label": "Compile Week 1 - Array Operations",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-std=c++17",
+                "-Wall",
+                "-Wextra",
+                "-g",
+                "-o",
+                "${workspaceFolder}/assignments/week01-arrays/array_ops",
+                "${workspaceFolder}/assignments/week01-arrays/array_operations.cpp"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": ["$gcc"],
+            "options": {
+                "cwd": "${workspaceFolder}/assignments/week01-arrays"
+            }
+        },
+        {
+            "label": "Test Week 1 - Array Operations",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-std=c++17",
+                "-Wall",
+                "-Wextra",
+                "-g",
+                "-o",
+                "test_array_ops",
+                "array_operations.cpp",
+                "../../tests/week01/test_array_operations.cpp",
+                "-lgtest",
+                "-lgtest_main",
+                "-pthread"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": ["$gcc"],
+            "options": {
+                "cwd": "${workspaceFolder}/assignments/week01-arrays"
+            }
+        },
+        {
+            "label": "Format Code",
+            "type": "shell",
+            "command": "find assignments -name '*.cpp' -o -name '*.h' -o -name '*.hpp' | xargs clang-format -i",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Memory Check with Valgrind",
+            "type": "shell",
+            "command": "valgrind",
+            "args": [
+                "--tool=memcheck",
+                "--leak-check=full",
+                "--track-origins=yes",
+                "--verbose",
+                "${input:executablePath}"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated"
+            }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "executablePath",
+            "description": "Path to executable for memory checking",
+            "default": "./array_ops",
+            "type": "promptString"
+        }
+    ]
+}

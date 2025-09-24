@@ -1,0 +1,129 @@
+name: DSA Assignment Auto-Grader
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths: 
+      - 'assignments/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'assignments/**'
+
+jobs:
+  test-assignments:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [g++, clang++]
+        
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup C++ environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake gdb valgrind clang
+        
+    - name: Install testing framework
+      run: |
+        # Install Google Test
+        sudo apt-get install -y libgtest-dev
+        cd /usr/src/gtest
+        sudo cmake CMakeLists.txt
+        sudo make
+        sudo cp lib/*.a /usr/lib
+        
+    - name: Compile and test Week 1 - Arrays
+      run: |
+        cd assignments/week01-arrays
+        if [ -f "array_operations.cpp" ]; then
+          echo "Testing Array Operations..."
+          ${{ matrix.compiler }} -std=c++17 -Wall -Wextra -o array_ops array_operations.cpp ../../tests/week01/test_array_operations.cpp -lgtest -lgtest_main -pthread || echo "Compilation failed for array_operations.cpp"
+          if [ -f "array_ops" ]; then
+            ./array_ops || echo "Tests failed for array_operations"
+          fi
+        fi
+        
+        if [ -f "search_algorithms.cpp" ]; then
+          echo "Testing Search Algorithms..."
+          ${{ matrix.compiler }} -std=c++17 -Wall -Wextra -o search_algos search_algorithms.cpp ../../tests/week01/test_search_algorithms.cpp -lgtest -lgtest_main -pthread || echo "Compilation failed for search_algorithms.cpp"
+          if [ -f "search_algos" ]; then
+            ./search_algos || echo "Tests failed for search_algorithms"
+          fi
+        fi
+        
+        if [ -f "array_manipulation.cpp" ]; then
+          echo "Testing Array Manipulation..."
+          ${{ matrix.compiler }} -std=c++17 -Wall -Wextra -o array_manip array_manipulation.cpp ../../tests/week01/test_array_manipulation.cpp -lgtest -lgtest_main -pthread || echo "Compilation failed for array_manipulation.cpp"
+          if [ -f "array_manip" ]; then
+            ./array_manip || echo "Tests failed for array_manipulation"
+          fi
+        fi
+        
+    - name: Compile and test Week 2 - Linked Lists
+      run: |
+        cd assignments/week02-linked-lists
+        if [ -f "linked_list.cpp" ]; then
+          echo "Testing Linked List..."
+          ${{ matrix.compiler }} -std=c++17 -Wall -Wextra -o linked_list linked_list.cpp ../../tests/week02/test_linked_list.cpp -lgtest -lgtest_main -pthread || echo "Compilation failed for linked_list.cpp"
+          if [ -f "linked_list" ]; then
+            ./linked_list || echo "Tests failed for linked_list"
+          fi
+        fi
+        
+    - name: Compile and test Week 3 - Stacks and Queues
+      run: |
+        cd assignments/week03-stacks-queues
+        if [ -f "stack.cpp" ]; then
+          echo "Testing Stack..."
+          ${{ matrix.compiler }} -std=c++17 -Wall -Wextra -o stack stack.cpp ../../tests/week03/test_stack.cpp -lgtest -lgtest_main -pthread || echo "Compilation failed for stack.cpp"
+          if [ -f "stack" ]; then
+            ./stack || echo "Tests failed for stack"
+          fi
+        fi
+        
+        if [ -f "queue.cpp" ]; then
+          echo "Testing Queue..."
+          ${{ matrix.compiler }} -std=c++17 -Wall -Wextra -o queue queue.cpp ../../tests/week03/test_queue.cpp -lgtest -lgtest_main -pthread || echo "Compilation failed for queue.cpp"
+          if [ -f "queue" ]; then
+            ./queue || echo "Tests failed for queue"
+          fi
+        fi
+        
+    - name: Memory leak check with Valgrind
+      run: |
+        echo "Running memory leak detection..."
+        find assignments -name "*.cpp" -type f | while read file; do
+          dir=$(dirname "$file")
+          base=$(basename "$file" .cpp)
+          cd "$dir"
+          if [ -f "$base" ]; then
+            echo "Checking $file for memory leaks..."
+            valgrind --tool=memcheck --leak-check=full --track-origins=yes --error-exitcode=1 ./"$base" || echo "Memory issues detected in $file"
+          fi
+          cd - > /dev/null
+        done
+        
+    - name: Code style check
+      run: |
+        echo "Checking code style..."
+        find assignments -name "*.cpp" -o -name "*.h" -o -name "*.hpp" | xargs clang-format --dry-run -Werror || echo "Code style issues found. Please run clang-format on your files."
+        
+    - name: Generate test report
+      if: always()
+      run: |
+        echo "## Assignment Test Results" > test_report.md
+        echo "### Compilation Results" >> test_report.md
+        echo "- Compiler: ${{ matrix.compiler }}" >> test_report.md
+        echo "- Date: $(date)" >> test_report.md
+        echo "### Test Summary" >> test_report.md
+        echo "Check the workflow logs for detailed test results." >> test_report.md
+        
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results-${{ matrix.compiler }}
+        path: test_report.md

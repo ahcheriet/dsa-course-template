@@ -1,0 +1,45 @@
+{
+    "name": "DSA Course C++ Environment",
+    "image": "mcr.microsoft.com/devcontainers/cpp:1-ubuntu-22.04",
+    
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/github-cli:1": {}
+    },
+
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "C_Cpp.default.cppStandard": "c++17",
+                "C_Cpp.default.compilerPath": "/usr/bin/g++",
+                "C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
+                "files.associations": {
+                    "*.h": "cpp",
+                    "*.cpp": "cpp",
+                    "*.hpp": "cpp"
+                },
+                "editor.formatOnSave": true,
+                "editor.tabSize": 4,
+                "editor.insertSpaces": true
+            },
+            "extensions": [
+                "ms-vscode.cpptools-extension-pack",
+                "ms-vscode.cmake-tools",
+                "ms-vscode.test-adapter-converter",
+                "hbenl.vscode-test-explorer",
+                "vadimcn.vscode-lldb",
+                "formulahendry.code-runner",
+                "GitHub.copilot",
+                "GitHub.copilot-chat"
+            ]
+        }
+    },
+
+    "postCreateCommand": "sudo apt-get update && sudo apt-get install -y build-essential cmake gdb valgrind clang-format",
+    
+    "remoteUser": "vscode",
+    
+    "mounts": [
+        "source=dsa-course-bashhistory,target=/commandhistory,type=volume"
+    ]
+}
