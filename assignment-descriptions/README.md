@@ -34,38 +34,6 @@ assignment-descriptions/
    - Update the README with accurate descriptions
    - Ensure function signatures match the specifications
 
-## 🔄 PDF Processing Capabilities
-
-I can understand and process:
-- **Assignment requirements** and specifications
-- **Function signatures** and parameter details
-- **Input/output formats** and examples
-- **Test cases** and expected results
-- **Grading criteria** and point distributions
-- **Due dates** and submission requirements
-- **Algorithm complexity** requirements
-- **Edge cases** and constraints
-
-## 📝 What Gets Updated
-
-When you provide a PDF, I will automatically update:
-- **Template files** with correct function signatures
-- **Documentation** with accurate descriptions
-- **Test cases** matching the specifications
-- **README files** with proper requirements
-- **Comments** with time/space complexity notes
-- **Error handling** based on specified constraints
-
-## 🎯 Supported PDF Content
-
-- Assignment descriptions in English
-- Code specifications and requirements
-- Sample inputs and outputs
-- Grading rubrics
-- Algorithm requirements
-- Data structure specifications
-- Performance requirements
-
 ## 📤 Next Steps
 
 1. Add your PDF files to this directory
